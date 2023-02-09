@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="movieForm">
+        <label for="movieTitleInput">Movie Title</label>
+        <input id="movieTitleInput"type="text" name="movieTitleInput"><br>
+        <label for="moveRatingInput">Rating</label>
+        <input id = "moveRatingInput"type="number" min="0" max="10" name="moveRatingInput" required="required"><br>
+        <input type="submit">
+    </form>
+    sort by
+    <button id="sortByName">ABC</button> <button id="sortByRate">123</button>
+    <div id="movieContainer"></div>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script>
+        const mvName = $("#movieTitleInput");
+        const mvRate = $("#moveRatingInput");
+        const container = $("#movieContainer")
+        $('#movieForm').on("submit",(e)=>
+        {
+            e.preventDefault();
+            if(mvName.val().length < 2) 
+            {
+                alert("the movie name needs to be at least 2 characters long!")
+                return;}
+            $(`<div class="movieListing" data-rate="${mvRate.val()}" data-name="${mvName.val()}">
+                    ${mvName.val()}: ${mvRate.val()}
+                    <button>X</button>
+                </div>`).appendTo(container);
+            mvName.val("");
+            mvRate.val("");
+        })
+
+        container.on("click","button",(e)=>{e.target.parentElement.remove()});
+        
+        $('#sortByName').on('click',(e)=>
+        {
+            e.preventDefault();
+            sortBy('name')
+        })
+        $('#sortByRate').on('click',(e)=>
+        {
+            e.preventDefault();
+            sortBy('rate')
+        })
+        const sortBy = (data)=>
+        {
+            const unsortedList = new Set([...container.children()]);
+            let lowestValue;
+            let emergencyCounter = 50;
+            while(unsortedList.size > 0)
+            {
+                lowestValue= null;
+                for(let x of unsortedList)
+                {
+                    if(lowestValue == null || 
+                    (lowestValue.dataset[data] > x.dataset[data]))
+                    {
+                        lowestValue = x;
+                    }
+                }
+                container.append(lowestValue)
+                unsortedList.delete(lowestValue);
+                
+                console.log("deleteing 1");
+                emergencyCounter--;
+                if(emergencyCounter ==0) 
+                {
+                    console.log("quitting due")
+                    break;}
+            }
+        }
+    </script>
+</body>
+</html>
